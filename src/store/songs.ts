@@ -1,57 +1,27 @@
-import { writable } from 'svelte/store';
 import type { Song } from '../types/songs';
 import { LoadingStatus } from '../types/common';
-import { createInitialRequestState } from './utils';
+import type { ExecutingRequest } from '../utilits/requestHelpers';
+import { createRequestStore } from '../utilits/requestHelpers';
 
 const initialSongs: Song[] = []
+const getAllSongs: ExecutingRequest<Song[], string> = async (payload, update) => {
+	update(s => ({...s, loadingStatus: LoadingStatus.pending}))
 
-function createGetAllSongs() {
-	const { subscribe, set, update } = writable(createInitialRequestState(initialSongs));
+	const itunesSearched = await fetch(`https://itunes.apple.com/search?term=${payload}&entity=song`);
+	const all = await itunesSearched.json();
 
-	const run =  async (searched) => {
-		update(s => ({...s, loadingStatus: LoadingStatus.pending}))
-
-		const itunesSearched = await fetch(`https://itunes.apple.com/search?term=${searched}&entity=song`);
-		const all = await itunesSearched.json();
-
-		update(s => ({...s, data: all.results, loadingStatus: LoadingStatus.success}))
-	}
-
-	const reset =  () => {
-		set(createInitialRequestState(initialSongs))
-	}
-
-	return {
-		subscribe,
-		run,
-		reset
-	};
+	update(s => ({...s, data: all.results, loadingStatus: LoadingStatus.success}))
 }
 
 const initialSong: Song = null
+const getOneSongs: ExecutingRequest<Song, string> = async (payload, update) => {
+	update(s => ({...s, loadingStatus: LoadingStatus.pending}))
 
-function createGetSong() {
-	const { subscribe, set, update } = writable(createInitialRequestState(initialSong));
+	const itunesSearched = await fetch(`https://itunes.apple.com/search?term=${payload}&entity=song`);
+	const one = await itunesSearched.json();
 
-	const reset =  () => {
-		set(createInitialRequestState(initialSong))
-	}
-
-	const run = async (songId) => {
-		update(s => ({...s, loadingStatus: LoadingStatus.pending}))
-
-		const itunesSearched = await fetch(`https://itunes.apple.com/search?term=${songId}&entity=song`);
-		const one = await itunesSearched.json();
-
-		update(s => ({...s, data: one.results[0], loadingStatus: LoadingStatus.success}))
-	}
-
-	return {
-		subscribe,
-		run,
-		reset
-	};
+	update(s => ({...s, data: one.results[0], loadingStatus: LoadingStatus.success}))
 }
 
-export const allSongs = createGetAllSongs();
-export const song = createGetSong();
+export const allSongs = createRequestStore(initialSongs, getAllSongs);
+export const song = createRequestStore(initialSong, getOneSongs);

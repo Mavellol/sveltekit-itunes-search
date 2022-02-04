@@ -6,7 +6,7 @@
 	import preloader from '../../../static/preloader.gif';
 
 	onMount(() => {
-		song.run($page.params.songId)
+		song.request($page.params.songId)
 		return () => {
 			song.reset()
 		}

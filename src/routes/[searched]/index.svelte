@@ -7,7 +7,7 @@
 	import preloader from '../../../static/preloader.gif';
 
 	onMount(() => {
-		allSongs.run($page.params.searched);
+		allSongs.request($page.params.searched);
 		return () => {
 			allSongs.reset();
 		}

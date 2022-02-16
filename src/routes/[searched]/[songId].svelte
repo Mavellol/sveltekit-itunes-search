@@ -10,9 +10,8 @@
 	const getOneSong = container.store.songs.getOneSong;
 
 	onMount(() => {
-		getOneSong.request($page.params.songId);
-		return () => {
-			getOneSong.reset()
+		if ($getOneSong.meta.filter !== $page.params.songId) {
+			getOneSong.request($page.params.songId);
 		}
 	})
 </script>

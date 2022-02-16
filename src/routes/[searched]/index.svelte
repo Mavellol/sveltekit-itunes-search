@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {page} from '$app/stores';
-	import {onMount, getContext} from 'svelte';
-	import {goto} from '$app/navigation';
+	import { page } from '$app/stores';
+	import { getContext, onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { LoadingStatus } from '../../types/common';
 	import preloader from '../../../static/preloader.gif';
 	import { Container } from '../../useAppContainer';
@@ -11,9 +11,8 @@
 	const getAllSongs = container.store.songs.getAllSongs;
 
 	onMount(() => {
-		getAllSongs.request($page.params.searched);
-		return () => {
-			getAllSongs.reset();
+		if ($getAllSongs.meta.filter !== $page.params.searched) {
+			getAllSongs.request($page.params.searched);
 		}
 	})
 </script>

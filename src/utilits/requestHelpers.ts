@@ -5,36 +5,41 @@ import type { Updater } from 'svelte/types/runtime/store';
 import type { Subscriber, Unsubscriber } from 'svelte/types/runtime/store';
 import type { Services } from '../services/types';
 
-export const createInitialRequestState = <T>(initialState: T): RequestState<T> => {
-	return { data: initialState, loadingStatus: LoadingStatus.idle };
+export const createInitialRequestState = <DataType, MetaType>(initialState: DataType, meta?: MetaType): RequestState<DataType, MetaType> => {
+	return { data: initialState, loadingStatus: LoadingStatus.idle, meta: meta };
 };
 
-export interface RequestStore<DataType, PayloadType> {
-	subscribe: (run: Subscriber<RequestState<DataType>>, invalidate?: (value?: RequestState<DataType>) => void) => Unsubscriber;
-	request: RequestHandler<DataType, PayloadType>;
+export interface RequestStore<DataType, PayloadType, MetaType = undefined> {
+	subscribe: (
+		run: Subscriber<RequestState<DataType, MetaType>>,
+		invalidate?: (value?: RequestState<DataType, MetaType>) => void
+	) => Unsubscriber;
+	request: (v: PayloadType) => void;
 	reset: () => void;
 }
 
-export type RequestHandler<DataType, PayloadType> = (
+export type RequestHandler<DataType, PayloadType, MetaType = undefined> = (
 	services: Services,
 	payload: PayloadType,
-	update: (updater: Updater<RequestState<DataType>>) => void,
-	set: (value: RequestState<DataType>) => void,
+	update: (updater: Updater<RequestState<DataType, MetaType>>) => void,
+	set: (value: RequestState<DataType, MetaType>) => void,
 ) => Promise<void>;
 
-export const createRequestStore = <DataType, PayloadType>(
+export const createRequestStore = <DataType, PayloadType, MetaType = undefined>(
 	services: Services,
 	initialState: DataType,
-	handler: RequestHandler<DataType, PayloadType>,
-): RequestStore<DataType, PayloadType> => {
-	const {subscribe, update, set}: Writable<RequestState<DataType>> = writable(createInitialRequestState(initialState));
+	handler: RequestHandler<DataType, PayloadType, MetaType>,
+	meta: MetaType,
+): RequestStore<DataType, PayloadType, MetaType> => {
+	const {subscribe, update, set}: Writable<RequestState<DataType, MetaType>> =
+		writable(createInitialRequestState(initialState, meta));
 
 	const request = async (payload) => {
 		await handler(services, payload, update, set);
 	}
 
 	const reset = () => {
-		set(createInitialRequestState(initialState))
+		set(createInitialRequestState(initialState, meta))
 	}
 
 	return {

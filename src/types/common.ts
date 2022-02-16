@@ -1,5 +1,3 @@
-import type { Unsubscriber } from 'svelte/types/runtime/store';
-
 export enum LoadingStatus {
 	idle = 'idle',
 	pending = 'pending',
@@ -7,7 +5,8 @@ export enum LoadingStatus {
 	failed = 'failed',
 }
 
-export class RequestState<T> {
-	data: T;
+export class RequestState<DataType, MetaType> {
+	data: DataType;
+	meta?: MetaType;
 	loadingStatus: LoadingStatus;
 }

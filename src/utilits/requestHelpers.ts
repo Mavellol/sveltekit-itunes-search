@@ -25,6 +25,12 @@ export type RequestHandler<DataType, PayloadType, MetaType = undefined> = (
 	set: (value: RequestState<DataType, MetaType>) => void,
 ) => Promise<void>;
 
+const handlerWrapper = async (handler: RequestHandler<any, any, any>, services, payload, update, set) => {
+	update(s => ({...s, loadingStatus: LoadingStatus.pending}))
+	await handler(services, payload, update, set);
+	update(s => ({...s, loadingStatus: LoadingStatus.success}))
+}
+
 export const createRequestStore = <DataType, PayloadType, MetaType = undefined>(
 	services: Services,
 	initialState: DataType,
@@ -35,7 +41,7 @@ export const createRequestStore = <DataType, PayloadType, MetaType = undefined>(
 		writable(createInitialRequestState(initialState, meta));
 
 	const request = async (payload) => {
-		await handler(services, payload, update, set);
+		await handlerWrapper(handler, services, payload, update, set);
 	}
 
 	const reset = () => {

@@ -1,10 +1,11 @@
 import { ApiService } from './services/Api.service';
 import type { Services } from './services/types';
 import { ServiceNames } from './constants/app.constants';
+import type { Store } from './store';
 import { initStore } from './store';
 
 export interface Container {
-	store: any;
+	store: Store;
 	services: Services;
 }
 
@@ -15,10 +16,8 @@ export const createContainer = (): Container => {
 		[ServiceNames.api]: apiService,
 	};
 
-	const store = initStore(services);
-
 	return {
-		store,
+		store: initStore(services),
 		services,
 	};
 };

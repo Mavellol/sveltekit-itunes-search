@@ -3,6 +3,14 @@ import { LoadingStatus } from '../types/common';
 import type { RequestHandler } from '../utilits/requestHelpers';
 import { getPrepareStore } from '../utilits/storeHelpers';
 import { ServiceNames } from '../constants/app.constants';
+import type { RequestStore } from '../utilits/requestHelpers';
+
+export interface SongStore {
+	songs: {
+		getAllSongs: RequestStore<Song[], string>
+		getOneSong: RequestStore<Song, string>
+	}
+}
 
 const initialSongs: Song[] = []
 const getAllSongs: RequestHandler<Song[], string> = async (services, payload, update) => {

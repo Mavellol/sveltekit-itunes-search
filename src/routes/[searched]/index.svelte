@@ -1,11 +1,12 @@
-<script>
+<script lang="ts">
 	import {page} from '$app/stores';
 	import {onMount, getContext} from 'svelte';
 	import {goto} from '$app/navigation';
 	import { LoadingStatus } from '../../types/common';
 	import preloader from '../../../static/preloader.gif';
+	import { Container } from '../../useAppContainer';
 
-	const container = getContext('container');
+	const container: Container = getContext('container');
 
 	const getAllSongs = container.store.songs.getAllSongs;
 
@@ -15,7 +16,6 @@
 			getAllSongs.reset();
 		}
 	})
-
 </script>
 
 <section>

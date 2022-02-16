@@ -1,10 +1,11 @@
-<script>
+<script lang="ts">
 	import {page} from '$app/stores';
 	import { getContext, onMount } from 'svelte';
 	import { LoadingStatus } from '../../types/common';
 	import preloader from '../../../static/preloader.gif';
+	import { Container } from '../../useAppContainer';
 
-	const container = getContext('container');
+	const container: Container = getContext('container');
 
 	const getOneSong = container.store.songs.getOneSong;
 
@@ -17,7 +18,6 @@
 </script>
 
 <section>
-
 	{#if $getOneSong.loadingStatus === LoadingStatus.pending}
 		<img src='{preloader}' alt='alt'>
 	{:else }

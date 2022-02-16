@@ -1,9 +1,5 @@
 <script>
-	import { setContext } from 'svelte';
 	import {goto} from '$app/navigation';
-	import { createContainer } from '../useAppContainer';
-
-	setContext('container', createContainer());
 
 	var searched = '';
 	const search = () => {

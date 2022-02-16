@@ -1,6 +1,10 @@
 <script>
   import '../tailwind.css'
   import Header from '../components/Header.svelte'
+  import { setContext } from 'svelte';
+  import { createContainer } from '../useAppContainer';
+
+  setContext('container', createContainer());
 </script>
 
 <Header />

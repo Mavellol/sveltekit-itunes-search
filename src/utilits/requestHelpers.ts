@@ -4,6 +4,7 @@ import type { Writable } from 'svelte/types/runtime/store';
 import type { Updater } from 'svelte/types/runtime/store';
 import type { Subscriber, Unsubscriber } from 'svelte/types/runtime/store';
 import type { Services } from '../services/types';
+import type { PrepareStore } from './storeHelpers';
 
 export const createInitialRequestState = <DataType, MetaType>(initialState: DataType, meta?: MetaType): RequestState<DataType, MetaType> => {
 	return { data: initialState, loadingStatus: LoadingStatus.idle, meta: meta };
@@ -33,19 +34,17 @@ const handlerWrapper = async (handler: RequestHandler<any, any, any>, services, 
 
 export const createRequestStore = <DataType, PayloadType, MetaType = undefined>(
 	services: Services,
-	initialState: DataType,
-	handler: RequestHandler<DataType, PayloadType, MetaType>,
-	meta: MetaType,
+	prepareStore: PrepareStore<DataType, PayloadType, MetaType>,
 ): RequestStore<DataType, PayloadType, MetaType> => {
 	const {subscribe, update, set}: Writable<RequestState<DataType, MetaType>> =
-		writable(createInitialRequestState(initialState, meta));
+		writable(createInitialRequestState(prepareStore.initialState, prepareStore.meta));
 
 	const request = async (payload) => {
-		await handlerWrapper(handler, services, payload, update, set);
+		await handlerWrapper(prepareStore.handler, services, payload, update, set);
 	}
 
 	const reset = () => {
-		set(createInitialRequestState(initialState, meta))
+		set(createInitialRequestState(prepareStore.initialState, prepareStore.meta))
 	}
 
 	return {

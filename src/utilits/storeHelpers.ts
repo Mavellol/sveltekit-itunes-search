@@ -1,6 +1,6 @@
 import type { RequestHandler } from './requestHelpers';
 
-interface PrepareStore<DataType, PayloadType, MetaType = undefined> {
+export interface PrepareStore<DataType, PayloadType, MetaType = undefined> {
 	initialState: DataType
 	handler: RequestHandler<DataType, PayloadType, MetaType>
 	meta: MetaType

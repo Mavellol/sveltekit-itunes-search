@@ -7,7 +7,7 @@ export type Store = SongStore
 
 export const initStore = (services: Services) => ({
 	songs: {
-		getAllSongs: createRequestStore(services, prepareAllSongs.initialState, prepareAllSongs.handler, prepareAllSongs.meta),
-		getOneSong: createRequestStore(services, prepareSong.initialState, prepareSong.handler, prepareAllSongs.meta),
+		getAllSongs: createRequestStore(services, prepareAllSongs),
+		getOneSong: createRequestStore(services, prepareSong),
 	}
 } as unknown as Store);
